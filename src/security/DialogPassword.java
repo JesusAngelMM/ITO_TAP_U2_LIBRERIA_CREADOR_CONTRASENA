@@ -4,6 +4,11 @@
  */
 package security;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import javax.swing.SpinnerNumberModel;
+
 /**
  *
  * @author Usuario
@@ -17,6 +22,12 @@ public class DialogPassword extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setSize(440, 140);
+        
+        SpinnerNumberModel length = new SpinnerNumberModel();
+        length.setMaximum(32);
+        length.setMinimum(4);
+        length.setValue(8);
+        spiLength.setModel(length);
     }
 
     /**
@@ -55,6 +66,11 @@ public class DialogPassword extends javax.swing.JDialog {
         });
 
         btnCopy.setText("Copiar");
+        btnCopy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCopyActionPerformed(evt);
+            }
+        });
 
         btnOption.setText("...");
         btnOption.addActionListener(new java.awt.event.ActionListener() {
@@ -162,12 +178,30 @@ public class DialogPassword extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
-        // TODO add your handling code here:
+        int length = (int) spiLength.getValue();
+
+        Boolean includeNumbers = false, includeSymbols = false;
+        if (chkSimbols.isSelected()) {
+            includeSymbols = true;
+        }
+        if (chkNumbers.isSelected()) {
+            includeNumbers = true;
+        }
+        lblPassword.setText(SecurePasswordGenerator.SecurePasswordGenerator(length, includeSymbols, includeNumbers));
     }//GEN-LAST:event_btnStartActionPerformed
 
     private void btnOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOptionActionPerformed
         setSize(440, 250);
     }//GEN-LAST:event_btnOptionActionPerformed
+
+    private void btnCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCopyActionPerformed
+        Toolkit toolkit = Toolkit.getDefaultToolkit();  // Obtener el Toolkit del sistema
+        // Obtener el portapapeles del sistema
+        Clipboard clipboard = toolkit.getSystemClipboard();
+        StringSelection selection = new StringSelection(lblPassword.getText());
+        // Copiar el texto al portapapeles
+        clipboard.setContents(selection, null);
+    }//GEN-LAST:event_btnCopyActionPerformed
 
     /**
      * @param args the command line arguments
